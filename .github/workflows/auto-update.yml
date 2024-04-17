@@ -1,0 +1,37 @@
+name : Automatically update Branches
+
+on:
+    push:
+        branches:
+            - master
+jobs:
+    update_branches:
+        runs-on: ubuntu-latest
+        steps:
+            - name: 1 - Checkout repos 
+              uses: actions/checkout@v3
+              with:
+                fetch-depth: 0
+            - name: 2 - Setup Git
+              run: |
+                git config --global user.name 'GitHub Actions'
+                git config --global user.email 'actions@github.com'
+            - name: 3 - Merge master
+              run: |
+                # File to store log of failed merges
+                echo "Failed merges:" > merge-failures.log
+                for branch in $(git branch -r | grep -v 'master' | sed 's/origin\///'); do
+                git checkout $branch
+                if git merge origin/master --no-edit; then
+                  git push origin $branch
+                else
+                  echo "$branch had a merge conflict or failed to merge." >> merge-failures.log
+                  git merge --abort
+                fi
+                done
+            - name: Upload merge failure log
+              uses: actions/upload-artifact@v3
+              if: always() # This ensures the step runs even if the previous steps fail
+              with:
+                name: merge-failures
+                path: merge-failures.log
