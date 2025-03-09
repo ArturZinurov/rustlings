@@ -1,9 +1,11 @@
 name: Rust CI & Auto Merge
+permissions:
+  pull-requests: write
+  contents: write
 
 on:
   pull_request:
     branches: [ "master" ]
-
 env:
   CARGO_TERM_COLOR: always
 
