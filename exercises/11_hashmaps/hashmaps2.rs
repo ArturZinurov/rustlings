@@ -8,7 +8,7 @@
 // to insert any more of the fruits that are already in the basket (Apple,
 // Mango, and Lychee).
 
-use std::{collections::HashMap, io::empty};
+use std::collections::HashMap;
 
 #[derive(Hash, PartialEq, Eq, Debug)]
 enum Fruit {
